@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video Player and Chat</title>
+  <style>
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+    }
+    
+    .video {
+      flex: 1;
+      height: 100%;
+      border: 1px solid black;
+      float: center;
+    }
+
+      .scrollable-window {
+      width: 300px;
+      height: 200px;
+      overflow: auto;
+      border: 1px solid black;
+    }
+    .chat {
+      flex: 1;
+      height: 100%;
+      border: 1px solid black;
+      display: flex;
+      flex-direction: column;
+    }
+    p1 {
+  text-align: center; /* 居中对齐文本 */
+}
+    .message-area {
+      flex: 1;
+      overflow: auto;
+      padding: 10px;
+      
+    }
+    
+    .input-area {
+      padding: 10px;
+      display: flex;
+    }
+    
+    .input-field {
+      flex: 1;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="video">
+      
+<video width="1100" height="400" controls>
+  <source src="D:\obs\spman.mp4" type="video/mp4">
+</video>
+    </div>
+    <div class="chat">
+      <div class="message-area">
+        <!-- 在此插入消息界面的代码 -->
+       
+
+    <!-- 在此插入消息界面的代码 -->
+      </div>
+      <div class="input-area" method="GET">
+      <form action="/2/" method="GET">
+       <input name="message" type="text" class="input-field" placeholder="输入消息">
+        <button type="submit">发送</button>
+        </form>
+      </div>
+    </div>  
+  </div>
+
+
+</body>
+</html>
+
