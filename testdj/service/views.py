@@ -1,6 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 import os
+from django.views.decorators.csrf import csrf_exempt
 from django.template import engines
 
 from service.chatgpt import gpt
@@ -9,6 +10,7 @@ django_engine = engines['django']
 
 html_template0 = """
 <!DOCTYPE html>
+
 <html>
 <head>
 
@@ -119,25 +121,15 @@ html_template0 = """
       </ul>
       
       </div>
-      <div class="input-area" method="GET">
-      <form action="/2/" method="GET">
+      <div class="input-area" method="POST">
+      <form action="/2/" method="POST">
+      {% csrf_token %}
        <input  name="message" type="text" class="input-field" placeholder="输入消息">
         <button type="submit">发送</button>
         </form>
       </div>
     </div>  
   </div>
-
-  <script>
-    function sendMessage() {
-      var input = document.querySelector('.input-field');
-      var message = input.value;
-      // 在这里执行发送消息的逻辑，例如通过Ajax将消息发送到服务器
-
-      // 清空输入框
-      input.value = '';
-    }
-  </script>
 </body>
 </html>
 
@@ -232,7 +224,7 @@ html_template4 = """
 <html>
 <head>
 
-<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=0.3, maxmum-scale=1.0, minimum-scale=0.3">
+
   <title>Video Player and Chat</title>
   <style>
     .container {
@@ -308,8 +300,9 @@ html_template4 = """
 
     <!-- 在此插入消息界面的代码 -->
       </div>
-      <div class="input-area" method="GET">
-      <form action="/2/" method="GET">
+      <div class="input-area" method="POST">
+      <form action="/2/" method="POST">
+      {% csrf_token %}
        <input name="message" type="text" class="input-field" placeholder="输入消息">
         <button type="submit">发送</button>
         </form>
@@ -321,13 +314,85 @@ html_template4 = """
 </body>
 </html>
 """
+
+html_template6="""<!DOCTYPE html>
+<html>
+<head>
+    <title>登录</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            padding: 10%;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>用户登录</h1>
+        <form action="login/" method="post">
+            <label for="username">用户名:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">密码:</label>
+            <input type="password" id="password" name="password" required>
+
+            <input type="submit" value="登录">
+        </form>
+    </div>
+</body>
+</html>
+"""
 b = []
 d = []
+#
+# template = django_engine.from_string(html_template0)
 
-template = django_engine.from_string(html_template0)
 
-
+@csrf_exempt
 def listorders(request):
+    template = django_engine.from_string(html_template6)
+    rendered = template.render()
     # if request.post("message") == '1':
     #     message = request.POST.get('message')  # 获取前端发送的消息内容
     #     # 在这里处理接收到的消息，例如保存到数据库或执行其他逻辑
@@ -336,17 +401,20 @@ def listorders(request):
     #     return render(request, 'result.html')
     # else:
     #     return render(request, 'login.html')
-    return HttpResponse(html_template4)
+    return HttpResponse(rendered)
 
 
+@csrf_exempt
 def listorderss(request):
-    message1 = request.GET.get("message")
+    template = django_engine.from_string(html_template0)
+    # message1 = request.GET.get("message")
+    message1 = request.POST.get("message")
     a = gpt()
     message = [{"role": "system", "content": ""}]
     message[0]['content'] = message1
     c = a.send_request(message)
-    e='/static/spman.mp4'
-    f='/static/douyin.mp4'
+    e = '/static/spman.mp4'
+    f = '/static/douyin.mp4'
     b.append(message1)
     d.append(c['content'])
     zipdata = zip(b, d)
@@ -360,6 +428,6 @@ def listorderss(request):
     # # else:
     # #     return render(request, 'login.html')
     # a=html_template0+sguvu+html_template1
-    rendered = template.render({'zipdata': zipdata,'a':f})
+    rendered = template.render({'zipdata': zipdata, 'a': f})
 
     return HttpResponse(rendered)

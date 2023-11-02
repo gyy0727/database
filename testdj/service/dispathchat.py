@@ -1,3 +1,4 @@
+import views
 def dispatcher(request):
     # 将请求参数统一放入request 的 params 属性中，方便后续处理
 
