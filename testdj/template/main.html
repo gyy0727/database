@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>志愿录取系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #header {
+            text-align: center;
+            padding: 2px;
+            color: white;
+            background:#0984d9;
+        }
+
+        #main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        #menu {
+            background: #ffffff; /* 淡灰色 */
+            padding: 20px;
+            width: 20%;
+            overflow-y: auto;
+        }
+
+        #menu-options {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            color: #909399;/* 字的颜色是#909399 */
+        }
+
+        .menu-option {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #ffffff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #result {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+            color: #5e6166;
+            background: #daedf9; /* 渐进色，绿色 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 标题栏 -->
+    <div id="header">
+        <h1>志愿录取系统</h1>
+    </div>
+
+    <!-- 主要内容 -->
+    <div id="main-content">
+
+    <!-- 菜单栏 -->
+    <div id="menu">
+        <ul id="menu-options">
+            <li class="menu-option" onclick="showResult('招生计划')">招生计划</li>
+            <li class="menu-option" onclick="showResult('录取结果')">录取结果</li>
+            <li class="menu-option" onclick="showResult('退档队列')">退档队列</li>
+            <li class="menu-option" onclick="showResult('成绩分析')">成绩分析</li>
+            <li class="menu-option" onclick="showResult('人数分布')">人数分布</li>
+            <li class="menu-option" onclick="showResult('生源地分布')">生源地分布</li>
+            <!-- 其他菜单选项 -->
+        </ul>
+    </div>
+
+    <!-- 结果区域 -->
+    <div id="result">
+        <p id="result-text">欢迎来到志愿录取系统</p>
+    </div>
+
+</div>
+
+<script>
+    function showResult(option) {
+        if (option === "录取结果") {
+            fetch('/login/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // 处理 JSON 格式的响应
+                })
+                .then(data => {
+                    let content = '<table>';
+                    content += '<tr><th>考号</th><th>姓名</th><th>分数</th><th>是否录取</th><th>志愿1</th><th>志愿2</th><th>志愿3</th><th>志愿4</th><th>志愿5</th><th>备选志愿</th><th>外语语种</th><th>备注</th></tr>'; // 表头
+                    data.forEach(subArray => {
+                        content += '<tr>';
+                        subArray.forEach(item => {
+                            content += `<td>${item ?? ''}</td>`; // 创建表格单元格，空值用空字符串代替
+                        });
+                        content += '</tr>';
+                    });
+                    content += '</table>';
+                    document.getElementById('result-text').innerHTML = content;
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                    document.getElementById('result-text').innerText = 'Error loading data';
+                });
+        }
+    }
+</script>
+
+
+</body>
+</html>

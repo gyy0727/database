@@ -20,18 +20,14 @@ from django.template.defaulttags import url
 from django.urls import path
 from django.views import static ##新增
 from django.conf import settings ##新增
-from common import selectfromstudent
 from common import views
 from common import login
-from service.views import listorders, listorderss
+from common.views import listorders
 from testdj import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("1/", listorders),
-    path("2/", listorderss),
-    path("login/", views.signin),
-    path("3/", login.user_login),
-    path("SFS/", selectfromstudent.studentAllSql),
+    path("login/", views.signin)
 
 ]
