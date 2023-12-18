@@ -14,20 +14,24 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls.static import static
+
 from django.contrib import admin
-from django.template.defaulttags import url
 from django.urls import path
-from django.views import static ##新增
-from django.conf import settings ##新增
 from common import views
-from common import login
+from common import downexecl
 from common.views import listorders
-from testdj import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("1/", listorders),
-    path("login/", views.signin)
-
+    path("1/", listorders),  # 去往首页的路径
+    path("2/", views.signout),  # 登出处理
+    path("3/", views.responseStudent),  # 查询所有student信息
+    path("4/", views.responseAdmission),  # 所有已录取学生信息
+    path("5/", views.responseAdjustment),  # 调剂队列
+    path("6/", views.responseMajor),  # 所有专业招生计划
+    path("7/", views.responseWithdrawal),  # 所有退档学生信息
+    path("8/", views.allView),  # 根据学院,专业排名的视图
+    path("8/", views.allDepartmentDetial),  # 根据学院,专业排名的视图
+    path("login/", views.signin),
+    path("download/", downexecl.download_zip)
 ]
