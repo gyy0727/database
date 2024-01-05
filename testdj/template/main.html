@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入 jQuery -->
+    <script src="../static/1.js"></script>
+    <!-- 引入 Bootstrap CSS -->
+    <link rel="stylesheet" href="../static/2.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../static/3.js"></script>
     <title>志愿录取系统</title>
     <style>
         body {
@@ -18,7 +26,7 @@
             text-align: center;
             padding: 2px;
             color: white;
-            background:#0984d9;
+            background: #0984d9;
         }
 
         #main-content {
@@ -34,11 +42,30 @@
             overflow-y: auto;
         }
 
+        #logout-container {
+            position: absolute; /* 绝对定位 */
+            top: 10px; /* 距离顶部 10px */
+            right: 10px; /* 距离右侧 10px */
+        }
+
+        #logout-button {
+            padding: 5px 10px; /* 内边距 */
+            background-color: #f44336; /* 背景颜色 */
+            color: white; /* 文字颜色 */
+            border: none; /* 无边框 */
+            border-radius: 5px; /* 圆角 */
+            cursor: pointer; /* 鼠标样式 */
+        }
+
+        #logout-button:hover {
+            background-color: #d32f2f; /* 鼠标悬停时的背景颜色 */
+        }
+
         #menu-options {
             list-style: none;
             padding: 0;
             margin: 0;
-            color: #909399;/* 字的颜色是#909399 */
+            color: #909399; /* 字的颜色是#909399 */
         }
 
         .menu-option {
@@ -54,28 +81,57 @@
             text-align: center;
             padding: 20px;
             color: #5e6166;
-            background: #daedf9; /* 渐进色，绿色 */
+            background: #daedf9;
+            overflow-y: auto; /* 添加滚动条 */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%; /* 让表格宽度充满容器 */
+            border-collapse: collapse; /* 边框合并 */
+        }
+
+        th, td {
+            border: 1px solid #ddd; /* 添加边框 */
+            padding: 8px; /* 增加内边距 */
+        }
+
+        th {
+            background-color: #f2f2f2; /* 表头背景色 */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
         }
     </style>
 </head>
 <body>
-    <!-- 标题栏 -->
-    <div id="header">
-        <h1>志愿录取系统</h1>
-    </div>
+<!-- 标题栏 -->
+<div id="header">
+    <h1>志愿录取系统</h1>
+</div>
+<!-- 登出按钮 -->
+<div id="logout-container">
+    <button id="logout-button" onclick="logout()">登出</button>
+</div>
 
-    <!-- 主要内容 -->
-    <div id="main-content">
+<!-- 主要内容 -->
+<div id="main-content">
 
     <!-- 菜单栏 -->
     <div id="menu">
         <ul id="menu-options">
-            <li class="menu-option" onclick="showResult('招生计划')">招生计划</li>
-            <li class="menu-option" onclick="showResult('录取结果')">录取结果</li>
-            <li class="menu-option" onclick="showResult('退档队列')">退档队列</li>
-            <li class="menu-option" onclick="showResult('成绩分析')">成绩分析</li>
-            <li class="menu-option" onclick="showResult('人数分布')">人数分布</li>
-            <li class="menu-option" onclick="showResult('生源地分布')">生源地分布</li>
+            <li class="menu-option" onclick="showResult1('所有专业招生信息')">招生计划</li>
+            <li class="menu-option" onclick="showResult2('录取结果')">录取结果</li>
+            <li class="menu-option" onclick="showResult3('退档队列')">退档队列</li>
+            <li class="menu-option" onclick="showResult4('调剂队列')">调剂队列</li>
+            <li class="menu-option" onclick="showResult5('成绩分析')">成绩分析</li>
+            <li class="menu-option" onclick="showResult6('人数分布')">人数分布</li>
+            <li class="menu-option" onclick="downloadZip()">文件下载</li>
             <!-- 其他菜单选项 -->
         </ul>
     </div>
@@ -88,36 +144,278 @@
 </div>
 
 <script>
-    function showResult(option) {
-        if (option === "录取结果") {
-            fetch('/login/')
+    function downloadZip() {
+    // 创建一个新的链接元素
+    var link = document.createElement('a');
+    link.href = '/download/'; // 设置下载的路径
+    link.download = 'file.zip'; // 设置下载的文件名
+    document.body.appendChild(link); // 将链接添加到页面中
+    link.click(); // 触发点击事件以开始下载
+    document.body.removeChild(link); // 从页面中移除链接
+}
+
+     document.addEventListener('DOMContentLoaded', function() {
+            // 自动显示招生计划信息
+            showResult1('所有专业招生信息');
+        });
+    function showResult1(option) {
+        if (option === "所有专业招生信息") {
+            fetch('/6/')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    return response.json(); // 处理 JSON 格式的响应
+                    return response.json();
                 })
                 .then(data => {
-                    let content = '<table>';
-                    content += '<tr><th>考号</th><th>姓名</th><th>分数</th><th>是否录取</th><th>志愿1</th><th>志愿2</th><th>志愿3</th><th>志愿4</th><th>志愿5</th><th>备选志愿</th><th>外语语种</th><th>备注</th></tr>'; // 表头
-                    data.forEach(subArray => {
-                        content += '<tr>';
-                        subArray.forEach(item => {
-                            content += `<td>${item ?? ''}</td>`; // 创建表格单元格，空值用空字符串代替
+                    if (data && typeof data.所有专业招生信息 === 'string') {
+                        // 反序列化字符串以获取数组
+                        let arrayData = JSON.parse(data.所有专业招生信息);
+
+                        let content = '<table>';
+                        content += '<tr><th>代码</th><th>专业编号</th><th>专业名称</th><th>学院</th><th>招生人数</th><th>特殊类别</th><th>校区</th><th>备注1</th><th>备注2</th><th>备注3</th></tr>';
+                        arrayData.forEach(subArray => {
+                            content += '<tr>';
+                            subArray.forEach(item => {
+                                content += `<td>${item ?? ''}</td>`; // 创建表格单元格，空值用空字符串代替
+                            });
+                            content += '</tr>';
                         });
-                        content += '</tr>';
-                    });
-                    content += '</table>';
-                    document.getElementById('result-text').innerHTML = content;
+                        content += '</table>';
+                        document.getElementById('result-text').innerHTML = content;
+                    }
                 })
                 .catch(error => {
                     console.error('There was a problem with your fetch operation:', error);
-                    document.getElementById('result-text').innerText = 'Error loading data';
                 });
         }
     }
-</script>
 
+    function showResult2(option) {
+        if (option === "录取结果") {
+            fetch('/4/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.admissiondata) {
+                        const admissions = JSON.parse(data.admissiondata);
+                        let content = '<table>';
+                        content += '<tr><th>序号</th><th>考生号</th><th>姓名</th><th>学院代码</th><th>专业代码</th><th>专业名称</th><th>学院名称</th></tr>';
+                        admissions.forEach(admission => {
+                            content += '<tr>';
+                            admission.forEach(item => {
+                                content += `<td>${item}</td>`;
+                            });
+                            content += '</tr>';
+                        });
+                        content += '</table>';
+                        document.getElementById('result-text').innerHTML = content;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching admission data:', error);
+                });
+        }
+    }
+
+    function showResult3(option) {
+        if (option === "退档队列") {
+            fetch('/7/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data['所有退档学生信息']) {
+                        const rejectedStudents = JSON.parse(data['所有退档学生信息']);
+                        let content = '<table>';
+                        content += '<tr><th>序号</th><th>考生号</th><th>姓名</th></tr>';
+                        rejectedStudents.forEach(student => {
+                            content += '<tr>';
+                            student.forEach(item => {
+                                content += `<td>${item}</td>`;
+                            });
+                            content += '</tr>';
+                        });
+                        content += '</table>';
+                        document.getElementById('result-text').innerHTML = content;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching rejected students data:', error);
+                });
+        }
+    }
+
+    function showResult4(option) {
+        if (option === "调剂队列") {
+            fetch('/5/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data['所有调剂学生信息']) {
+                        const adjustmentStudents = JSON.parse(data['所有调剂学生信息']);
+                        let content = '<table>';
+                        content += '<tr><th>序号</th><th>考生号</th><th>姓名</th></tr>';
+                        adjustmentStudents.forEach(student => {
+                            content += '<tr>';
+                            student.forEach(item => {
+                                content += `<td>${item}</td>`;
+                            });
+                            content += '</tr>';
+                        });
+                        content += '</table>';
+                        document.getElementById('result-text').innerHTML = content;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching adjustment students data:', error);
+                });
+        }
+    }
+
+    function showResult6(option) {
+        if (option === "人数分布") {
+            fetch('/8/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data['result']) {
+                        const rankingData = JSON.parse(data['result']);
+                        let content = '<table class="table table-striped">';
+                        content += '<thead><tr><th>排名</th><th>考生号</th><th>姓名</th><th>分数</th><th>专业代码</th><th>专业名称</th><th>学院名称</th><th>总分</th></tr></thead>';
+                        content += '<tbody>';
+
+                        rankingData.forEach(student => {
+                            content += '<tr>';
+                            student.forEach(item => {
+                                content += `<td>${item}</td>`;
+                            });
+                            content += '</tr>';
+                        });
+
+                        content += '</tbody></table>';
+                        $('#result-text').html(content);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+    }
+
+    function showResult5(option) {
+        if (option === "成绩分析") {
+            fetch('/9/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data['专业及学院最高最低平均']) {
+                        const statsData = JSON.parse(data['专业及学院最高最低平均']);
+                        displayStatsTable(statsData);
+                        displayStatsChart(statsData);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching stats data:', error);
+                });
+        }
+    }
+
+    function displayStatsTable(data) {
+        let content = '<table class="table table-striped">';
+        content += '<thead><tr><th>分类</th><th>最高排位</th><th>最高分</th><th>最低排位</th><th>最低分</th><th>平均分</th></tr></thead>';
+        content += '<tbody>';
+        data.forEach(item => {
+            content += `<tr>
+                        <td>${item.msg}</td>
+                        <td>${item['最高排位']}</td>
+                        <td>${item['最高分']}</td>
+                        <td>${item['最低排位']}</td>
+                        <td>${item['最低分']}</td>
+                        <td>${item['平均分']}</td>
+                    </tr>`;
+        });
+        content += '</tbody></table>';
+        $('#result-text').html(content);
+    }
+
+    function displayStatsChart(data) {
+        const labels = data.map(item => item.msg);
+        const highestScores = data.map(item => item['最高分']);
+        const lowestScores = data.map(item => item['最低分']);
+        const averageScores = data.map(item => parseFloat(item['平均分']));
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '最高分',
+                    data: highestScores,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                },
+                    {
+                        label: '最低分',
+                        data: lowestScores,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '平均分',
+                        data: averageScores,
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        borderWidth: 1
+                    }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function logout() {
+        fetch('/2/', {method: 'POST'}) // 假设登出是一个 POST 请求
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // 登出成功，重定向到 /1/
+                window.location.href = '/1/';
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+            });
+    }
+
+</script>
 
 </body>
 </html>

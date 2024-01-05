@@ -242,7 +242,15 @@ def allDepartmentDetial(request):
     return JsonResponse({'ret': "专业及学院最高最低平均", '专业及学院最高最低平均': data}, json_dumps_params={'ensure_ascii': False})
     # print(data)
 
-
+def test1(request):
+    userName = request.POST.get('姓名')
+    passWord = request.POST.get('考生号')
+    a = request.POST.get('专业志愿1')
+    # print(userName+passWord)
+    print(a==None)
+    return JsonResponse({'ret': 1}, json_dumps_params={'ensure_ascii': False})
+def test(request):
+    return  render(request, "test.html")
 def main():
     # Admission()
     # adjustment()

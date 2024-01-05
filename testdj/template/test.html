@@ -1,13 +1,342 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Example</title>
-</head>
-<body>
-    <button id="loginButton">登录</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- 引入 jQuery -->
+    <script src="../static/1.js"></script>
+    <!-- 引入 Bootstrap CSS -->
+    <link rel="stylesheet" href="../static/2.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../static/3.js"></script>
+    <title>志愿录取系统</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
 
-    <script src="../static/login.js"></script>
-</body>
+      #header {
+        text-align: center;
+        padding: 2px;
+        color: white;
+        background: #0984d9;
+      }
+
+      #main-content {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      #menu {
+        background: #ffffff; /* 淡灰色 */
+        padding: 20px;
+        width: 20%;
+        overflow-y: auto;
+      }
+
+      #logout-container {
+        position: absolute; /* 绝对定位 */
+        top: 10px; /* 距离顶部 10px */
+        right: 10px; /* 距离右侧 10px */
+      }
+
+      #logout-button {
+        padding: 5px 10px; /* 内边距 */
+        background-color: #f44336; /* 背景颜色 */
+        color: white; /* 文字颜色 */
+        border: none; /* 无边框 */
+        border-radius: 5px; /* 圆角 */
+        cursor: pointer; /* 鼠标样式 */
+      }
+
+      #logout-button:hover {
+        background-color: #d32f2f; /* 鼠标悬停时的背景颜色 */
+      }
+
+      #menu-options {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        color: #909399; /* 字的颜色是#909399 */
+      }
+
+      .menu-option {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #ffffff;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      #result {
+        flex: 1;
+        text-align: center;
+        padding: 20px;
+        color: #5e6166;
+        background: #daedf9;
+        overflow-y: auto; /* 添加滚动条 */
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%; /* 让表格宽度充满容器 */
+        border-collapse: collapse; /* 边框合并 */
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd; /* 添加边框 */
+        padding: 8px; /* 增加内边距 */
+      }
+
+      th {
+        background-color: #f2f2f2; /* 表头背景色 */
+      }
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      tr:hover {
+        background-color: #ddd;
+      }
+      #edit-options {
+        display: flex; /* 启用 Flexbox */
+        justify-content: space-between; /* 子元素平均分布 */
+        align-items: center; /* 垂直居中对齐 */
+        padding: 10px; /* 添加一些内边距 */
+      }
+
+      #edit-options .option {
+        flex-grow: 1; /* 每个子元素平均分配空间 */
+        flex-basis: 0; /* 从0开始计算每个项目的大小 */
+        text-align: center; /* 文本居中 */
+        margin: 0 10px; /* 子元素之间的水平间距 */
+        cursor: pointer;
+        padding: 10px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      #edit-options .option:hover {
+        background-color: #e0e0e0;
+      }
+      .form-group {
+        margin-bottom: 10px;
+      }
+
+      #add-form {
+        display: flex;
+        flex-direction: column;
+        width: 100%; /* 或者您可以指定一个具体的宽度 */
+      }
+
+      #add-form input[type="text"] {
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      #add-form button {
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+      }
+
+      #add-form button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 标题栏 -->
+    <div id="header">
+      <h1>志愿录取系统</h1>
+    </div>
+    <!-- 登出按钮 -->
+    <div id="logout-container">
+      <button id="logout-button" onclick="logout()">登出</button>
+    </div>
+
+
+    <!-- 主要内容 -->
+    <div id="main-content">
+      <!-- 菜单栏 -->
+      <div id="menu">
+        <ul id="menu-options">
+          <li class="menu-option" onclick="showResult7('增删改查')">
+            增删改查
+          </li>
+        </ul>
+      </div>
+
+      <!-- 结果区域 -->
+      <div id="result">
+        <p id="result-text">欢迎来到志愿录取系统</p>
+
+        <!-- 新增加的可点击区域，初始时隐藏 -->
+        <div id="edit-options" style="display: none">
+          <div class="option" onclick="showContent('add')">添加</div>
+          <div class="option" onclick="showContent('delete')">删除</div>
+          <div class="option" onclick="showContent('modify')">修改</div>
+          <div class="option" onclick="showContent('query')">查询</div>
+        </div>
+
+        <!-- 添加、删除、修改、查询、自定义操作的内容 -->
+        <div id="add" class="edit-content" style="display: none">
+          <form id="add-form">
+            <div class="form-group">
+              <label for="select-option">选择类型:</label>
+              <select
+                id="select-option"
+                name="select-option"
+                onchange="updateFormFields()"
+              >
+                <option value="type1">学生信息表</option>
+                <option value="type2">专业招生表</option>
+                <option value="type3">调剂表</option>
+                  <option value="type4">录取信息表</option>
+                <option value="type5">退档表</option>
+                <!-- 添加更多选项 -->
+              </select>
+            </div>
+            <div id="dynamic-fields">
+              <!-- 动态添加的输入框将放在这里 -->
+            </div>
+            <button type="submit">提交</button>
+          </form>
+        </div>
+
+        <div id="delete" class="edit-content" style="display: none">
+          删除操作的内容
+        </div>
+        <div id="modify" class="edit-content" style="display: none">
+          修改操作的内容
+        </div>
+        <div id="query" class="edit-content" style="display: none">
+          查询操作的内容
+        </div>
+      </div>
+    </div>
+    <script>
+      // 显示编辑选项的函数
+      function showResult7() {
+        document.getElementById("edit-options").style.display = "block";
+        hideAllEditContents();
+      }
+      function updateFormFields() {
+        var selection = document.getElementById("select-option").value;
+        var dynamicFields = document.getElementById("dynamic-fields");
+
+        dynamicFields.innerHTML = ""; // 清空现有的输入框
+
+        // 根据选择的类型添加不同的输入框
+        if (selection === "type1") {
+          dynamicFields.innerHTML = `
+      <input type="text" name="考生号" placeholder="输入学生信息的考生号">
+      <input type="text" name="姓名" placeholder="输入学生信息的姓名">
+      <input type="text" name="专业组号" placeholder="输入学生信息的专业组号">
+      <input type="text" name="投档成绩" placeholder="输入学生信息的投档成绩">
+      <input type="text" name="服从调剂" placeholder="输入学生信息的服从调剂">
+      <input type="text" name="专业志愿1" placeholder="输入学生信息的专业志愿1">
+      <input type="text" name="专业志愿2" placeholder="输入学生信息的专业志愿2">
+      <input type="text" name="专业志愿3" placeholder="输入学生信息的专业志愿3">
+      <input type="text" name="专业志愿4" placeholder="输入学生信息的专业志愿4">
+      <input type="text" name="专业志愿5" placeholder="输入学生信息的专业志愿5">
+      <input type="text" name="专业志愿6" placeholder="输入学生信息的专业志愿6">
+      <input type="text" name="体测受限1" placeholder="输入学生信息的体测受限1">
+      <input type="text" name="体测受限2" placeholder="输入学生信息的体测受限2">     `;
+        } else if (selection === "type2") {
+          dynamicFields.innerHTML =`
+      <input type="text" name="专业组号" placeholder="输入招生计划的考生号">
+      <input type="text" name="专业代号" placeholder="输入招生计划的专业代号">
+      <input type="text" name="专业名称" placeholder="输入招生计划的专业名称">
+      <input type="text" name="学院名称" placeholder="输入招生计划的学院名称">
+      <input type="text" name="招生计划数" placeholder="输入招生计划的招生计划数">
+      <input type="text" name="专业备注" placeholder="输入招生计划的专业备注">
+      <input type="text" name="办学地点" placeholder="输入招生计划的办学地点">
+      <input type="text" name="外语语种" placeholder="输入招生计划的外语语种">
+      <input type="text" name="体检受限1" placeholder="输入招生计划的体检受限1">
+      <input type="text" name="体检受限2" placeholder="输入招生计划的体检受限2">
+       `;
+        } else if (selection === "type3") {
+          dynamicFields.innerHTML =
+            '<input type="text" name="调剂位次" placeholder="输入调剂表的调剂位次">' +
+              '<input type="text" name="考生号" placeholder="输入调剂表的考生号">' +
+              '<input type="text" name="姓名" placeholder="输入调剂表的姓名">'
+              ;
+          // 可以继续添加更多条件来处理其他类型
+        } else if (selection === "type4") {
+          dynamicFields.innerHTML =
+            '<input type="text" name="录取位次" placeholder="输入录取信息表的录取位次">' +
+              '<input type="text" name="考生号" placeholder="输入录取信息表的考生号">' +
+              '<input type="text" name="姓名" placeholder="输入录取信息表的姓名">' +
+              '<input type="text" name="专业组号" placeholder="输入录取信息表的专业组号">' +
+              '<input type="text" name="专业代号" placeholder="输入录取信息表的专业代号">' +
+              '<input type="text" name="专业名称" placeholder="输入录取信息表的专业名称">';
+          // 可以继续添加更多条件来处理其他类型
+        } else if (selection === "type5") {
+          dynamicFields.innerHTML =
+            '<input type="text" name="退档位次" placeholder="输入退档表的退档位次">' +
+              '<input type="text" name="考生号" placeholder="输入退档表的考生号">' +
+              '<input type="text" name="姓名" placeholder="输入退档表的姓名">';
+          // 可以继续添加更多条件来处理其他类型
+        }
+      }
+
+      // 隐藏所有编辑内容的函数
+      function hideAllEditContents() {
+        var contents = document.getElementsByClassName("edit-content");
+        for (var i = 0; i < contents.length; i++) {
+          contents[i].style.display = "none";
+        }
+      }
+
+      // 显示特定编辑内容的函数
+      function showContent(contentId) {
+        hideAllEditContents();
+        document.getElementById(contentId).style.display = "block";
+      }
+      document.getElementById("add-form").onsubmit = function (event) {
+        event.preventDefault(); // 阻止表单的默认提交行为
+
+        // 收集表单数据
+        var formData = new FormData(this); // 假设 this 是您的表单元素
+
+        // 发送AJAX请求
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/test1/"); // 替换为您的后端URL
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            // 处理成功的响应
+            var response = JSON.parse(xhr.responseText);
+            if (response.ret === 1) {
+              alert("添加成功");
+            } else {
+              alert("添加失败");
+            }
+          } else {
+            // 处理其他错误
+            alert("请求失败: " + xhr.status);
+          }
+        };
+        // 发送表单数据
+        xhr.send(formData);
+      };
+    </script>
+  </body>
 </html>

@@ -31,7 +31,9 @@ urlpatterns = [
     path("6/", views.responseMajor),  # 所有专业招生计划
     path("7/", views.responseWithdrawal),  # 所有退档学生信息
     path("8/", views.allView),  # 根据学院,专业排名的视图
-    path("8/", views.allDepartmentDetial),  # 根据学院,专业排名的视图
+    path("9/", views.allDepartmentDetial),  # 根据学院,专业排名的视图
     path("login/", views.signin),
-    path("download/", downexecl.download_zip)
+    path("download/", downexecl.download_zip),
+    path("test/", views.test),
+path("test1/", views.test1)
 ]
